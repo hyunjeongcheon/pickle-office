@@ -121,7 +121,20 @@ function roomName(id) {
 }
 
 function memberOf(id) {
+  if (id === "hyunjeng" && !state.members[id] && state.members.hyeonjang) return state.members.hyeonjang;
   return state.members[id] || { name: id, emoji: "💬", color: "#fff6dd" };
+}
+
+function setAvatarContent(node, who, fallback) {
+  if (who && who.avatarUrl) {
+    var img = document.createElement("img");
+    img.src = who.avatarUrl;
+    img.alt = who.name || "";
+    node.textContent = "";
+    node.appendChild(img);
+  } else {
+    node.textContent = (who && who.emoji) || fallback || "💬";
+  }
 }
 
 function toast(msg) {
@@ -243,7 +256,8 @@ function renderPinAvatars() {
     here.forEach(function (m) {
       var p = state.presence[m.id];
       var live = isFresh(p) && p.roomId === room.id;
-      var av = el("i", "av", m.emoji || "💬");
+      var av = el("i", "av");
+      setAvatarContent(av, m, "💬");
       av.style.background = m.color || "#fff6dd";
       av.title = (m.name || "") + (live ? " · 참여 중" : " · 자리 비움");
       if (!live) av.className += " is-away";
@@ -366,7 +380,8 @@ function messageNode(m, ts) {
   var row = el("div", "msg" + (mine ? " is-me" : ""));
   if (!mine && isMentioned(m.text, state.myId)) row.className += " is-mention";
 
-  var av = el("div", "avatar", who.emoji || "💬");
+  var av = el("div", "avatar");
+  setAvatarContent(av, who, "💬");
   av.style.background = who.color || "#fff6dd";
   row.appendChild(av);
 
@@ -632,7 +647,8 @@ function renderMembers() {
   members.forEach(function (m) {
     var card = el("div", "member");
 
-    var av = el("div", "avatar", m.emoji || "💬");
+    var av = el("div", "avatar");
+    setAvatarContent(av, m, "💬");
     av.style.background = m.color || "#fff6dd";
     card.appendChild(av);
 
