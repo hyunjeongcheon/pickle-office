@@ -573,7 +573,7 @@ function handleFilePick(file) {
       pendingAttachment = { kind: "file", name: file.name, size: file.size, dataUrl: ev.target.result };
       renderAttachPreview();
     };
-    reader.readAsDataURL(file);
+    fr.readAsDataURL(file);
   }
 }
 
