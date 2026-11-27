@@ -439,9 +439,8 @@ function renderSenderSelect() {
   toArray(state.members).sort(byOrder).forEach(function (m) {
     var o = document.createElement("option");
     o.value = m.id;
-    var label = (m.display || m.name || m.id) + " (" + (m.emoji || "💬") + ")";
-    if (m.kind === "client") label = "👑 " + (m.display || m.name || m.id);
-    o.textContent = label;
+    var prefix = m.kind === "client" ? "👑 " : (m.emoji ? m.emoji + " " : "");
+    o.textContent = prefix + (m.display || m.name || m.id);
     sel.appendChild(o);
   });
   if (state.members[state.myId]) sel.value = state.myId;
