@@ -738,12 +738,17 @@ function saveMemo() {
 
 /* ---------------- Firebase 구독 ---------------- */
 function subscribeAll() {
+  var everConnected = false;
   onValue(ref(db, ".info/connected"), function (snap) {
     var on = snap.val() === true;
+    if (on) everConnected = true;
     var conn = $("conn");
     var txt = $("connText");
-    if (conn) conn.setAttribute("data-state", on ? "connected" : "offline");
-    if (txt) txt.textContent = on ? "실시간 연결" : "연결 끊김 — 다시 연결 중";
+    var st = on ? "connected" : (everConnected ? "offline" : "connecting");
+    if (conn) conn.setAttribute("data-state", st);
+    if (txt) {
+      txt.textContent = on ? "실시간 연결" : (everConnected ? "연결 끊김 — 다시 연결 중" : "연결 중…");
+    }
     if (on) { pushPresence(); registerDisconnect(); }
   });
 
