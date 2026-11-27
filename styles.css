@@ -771,3 +771,18 @@ picture { display: block; }
   text-decoration: none;
 }
 .msg-file:hover { background: #fff; }
+
+@media (max-width: 640px) {
+  .msg-list { height: clamp(180px, calc(100dvh - 380px), 400px); }
+  .composer-row { flex-wrap: wrap; gap: 6px; }
+  #msgInput {
+    order: 1;
+    flex: 1 1 100%;
+    width: 100%;
+    min-height: 54px;
+    line-height: 1.45;
+  }
+  .sender { order: 2; max-width: none; padding: 8px 10px; }
+  .attach-btn { order: 3; }
+  .send-btn { order: 4; margin-left: auto; padding: 9px 18px; }
+}
