@@ -350,7 +350,8 @@ picture { display: block; }
 }
 
 .msg-list {
-  height: min(54vh, 470px);
+  min-height: 240px;
+  max-height: min(60vh, 560px);
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 14px 12px 6px;
@@ -680,7 +681,7 @@ picture { display: block; }
   main { padding: 22px 22px 90px; }
   .brand-text h1 { font-size: 1.28rem; }
   .tab { font-size: .92rem; padding: 9px 16px; }
-  .msg-list { height: min(58vh, 560px); }
+  .msg-list { min-height: 300px; max-height: min(62vh, 580px); }
   .member-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .map-card { padding: 10px; }
   .pin { font-size: .84rem; padding: 7px 14px 8px 10px; }
