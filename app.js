@@ -390,7 +390,28 @@ function messageNode(m, ts) {
   body.appendChild(name);
 
   var bubble = el("div", "bubble");
-  appendWithMentions(bubble, String(m.text || ""));
+  if (m.text) appendWithMentions(bubble, String(m.text));
+  if (m.attachment && m.attachment.dataUrl) {
+    if (m.attachment.kind === "image") {
+      var img = document.createElement("img");
+      img.className = "msg-img";
+      img.src = m.attachment.dataUrl;
+      img.alt = m.attachment.name || "첨부 사진";
+      img.addEventListener("click", function () {
+        var w = window.open("", "_blank");
+        if (w) w.document.write('<img src="' + m.attachment.dataUrl + '" style="max-width:100%;height:auto;">');
+      });
+      bubble.appendChild(img);
+    } else {
+      var link = document.createElement("a");
+      link.className = "msg-file";
+      link.href = m.attachment.dataUrl;
+      link.download = m.attachment.name || "file";
+      var kb = m.attachment.size ? Math.max(1, Math.round(m.attachment.size / 1024)) + "KB" : "";
+      link.textContent = "📄 " + (m.attachment.name || "파일") + (kb ? " (" + kb + ")" : "");
+      bubble.appendChild(link);
+    }
+  }
   body.appendChild(bubble);
 
   body.appendChild(el("div", "msg-time", fmtTime(ts)));
@@ -490,11 +511,77 @@ function registerDisconnect() {
   }
 }
 
+var pendingAttachment = null;
+
+function renderAttachPreview() {
+  var box = $("attachPreview");
+  if (!box) return;
+  box.textContent = "";
+  if (!pendingAttachment) { box.hidden = true; return; }
+  box.hidden = false;
+  if (pendingAttachment.kind === "image") {
+    var im = document.createElement("img");
+    im.src = pendingAttachment.dataUrl;
+    box.appendChild(im);
+  }
+  var label = document.createElement("span");
+  label.textContent = (pendingAttachment.kind === "image" ? "📷 " : "📄 ") + pendingAttachment.name;
+  box.appendChild(label);
+  var rm = document.createElement("button");
+  rm.type = "button";
+  rm.className = "attach-rm";
+  rm.textContent = "✕";
+  rm.addEventListener("click", function () {
+    pendingAttachment = null;
+    var fi = $("fileInput");
+    if (fi) fi.value = "";
+    renderAttachPreview();
+  });
+  box.appendChild(rm);
+}
+
+function handleFilePick(file) {
+  if (!file) return;
+  if (file.type && file.type.indexOf("image/") === 0) {
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      var img = new Image();
+      img.onload = function () {
+        var maxSide = 900;
+        var w = img.width, h = img.height;
+        if (w > maxSide || h > maxSide) {
+          if (w >= h) { h = Math.round(h * maxSide / w); w = maxSide; }
+          else { w = Math.round(w * maxSide / h); h = maxSide; }
+        }
+        var canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        var dataUrl = canvas.toDataURL("image/jpeg", 0.78);
+        pendingAttachment = { kind: "image", name: file.name, size: dataUrl.length, dataUrl: dataUrl };
+        renderAttachPreview();
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  } else {
+    if (file.size > 1500 * 1024) {
+      banner("파일은 1.5MB 이하만 첨부할 수 있어요 (사진은 자동 압축됩니다).");
+      return;
+    }
+    var fr = new FileReader();
+    fr.onload = function (ev) {
+      pendingAttachment = { kind: "file", name: file.name, size: file.size, dataUrl: ev.target.result };
+      renderAttachPreview();
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
 function sendMessage() {
   var input = $("msgInput");
   if (!input || !db || !state.roomId) return;
   var text = input.value.trim();
-  if (!text) return;
+  if (!text && !pendingAttachment) return;
 
   var me = memberOf(state.myId);
   var payload = {
@@ -504,8 +591,15 @@ function sendMessage() {
     text: text,
     ts: serverTimestamp()
   };
+  if (pendingAttachment) {
+    payload.attachment = pendingAttachment;
+  }
 
   input.value = "";
+  pendingAttachment = null;
+  var fi = $("fileInput");
+  if (fi) fi.value = "";
+  renderAttachPreview();
   autoGrow();
   banner("");
 
@@ -833,6 +927,15 @@ function bindEvents() {
     composer.addEventListener("submit", function (e) {
       e.preventDefault();
       sendMessage();
+    });
+  }
+
+  var attachBtn = $("attachBtn");
+  var fileInput = $("fileInput");
+  if (attachBtn && fileInput) {
+    attachBtn.addEventListener("click", function () { fileInput.click(); });
+    fileInput.addEventListener("change", function () {
+      if (fileInput.files && fileInput.files[0]) handleFilePick(fileInput.files[0]);
     });
   }
 

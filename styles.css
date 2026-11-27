@@ -350,8 +350,9 @@ picture { display: block; }
 }
 
 .msg-list {
-  min-height: 240px;
-  max-height: min(60vh, 560px);
+  min-height: 190px;
+  height: clamp(190px, calc(100dvh - 340px), 440px);
+  max-height: clamp(190px, calc(100dvh - 340px), 440px);
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 14px 12px 6px;
@@ -681,7 +682,7 @@ picture { display: block; }
   main { padding: 22px 22px 90px; }
   .brand-text h1 { font-size: 1.28rem; }
   .tab { font-size: .92rem; padding: 9px 16px; }
-  .msg-list { min-height: 300px; max-height: min(62vh, 580px); }
+  .msg-list { height: auto; min-height: 300px; max-height: min(62vh, 580px); }
   .member-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .map-card { padding: 10px; }
   .pin { font-size: .84rem; padding: 7px 14px 8px 10px; }
@@ -699,3 +700,74 @@ picture { display: block; }
   object-fit: contain;
   display: block;
 }
+
+.attach-btn {
+  flex: 0 0 auto;
+  height: 38px;
+  min-width: 38px;
+  padding: 0 8px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #fff;
+  cursor: pointer;
+  font-size: 1.05rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.attach-btn:hover { background: var(--yellow-soft); }
+
+.attach-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: #fff9ea;
+  border: 1px solid #efd79a;
+  font-size: .78rem;
+  color: #6b4b12;
+}
+.attach-preview[hidden] { display: none; }
+.attach-preview img {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.attach-preview .attach-rm {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: .9rem;
+  color: #8c6d45;
+}
+
+.msg-img {
+  display: block;
+  max-width: min(240px, 60vw);
+  max-height: 240px;
+  border-radius: 10px;
+  margin-top: 4px;
+  cursor: pointer;
+  object-fit: cover;
+  border: 1px solid rgba(0, 0, 0, .06);
+}
+
+.msg-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .75);
+  border: 1px solid var(--line);
+  color: #5b4322;
+  font-size: .8rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.msg-file:hover { background: #fff; }
