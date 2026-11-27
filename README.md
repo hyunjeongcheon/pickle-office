@@ -48,4 +48,4 @@ presence/{피클ID}     {roomId, ts, name}
 ## 수정 방법
 
 `app.js` 맨 위 `firebaseConfig`만 바꾸면 다른 Firebase 프로젝트로 옮길 수 있습니다.
-`index.html` · `styles.css` · `app.js` · `office_map.png` 네 파일이 전부입니다.
+`index.html` · `styles.css` · `app.js` · `office_map.webp`(+`office_map.jpg` 대체 이미지) 전부입니다.

@@ -155,6 +155,7 @@ button { cursor: pointer; }
   display: grid;
   place-items: center;
 }
+.tab-badge[hidden] { display: none; }
 
 /* ---------- layout ---------- */
 main {
@@ -195,7 +196,6 @@ main {
 }
 .foot {
   text-align: center;
-  color: #a99madd;
   color: #a99a88;
   font-size: .72rem;
   padding: 0 16px 28px;
@@ -230,6 +230,7 @@ main {
   line-height: 0;
 }
 .map-img { width: 100%; height: auto; display: block; user-select: none; }
+picture { display: block; }
 
 .pin {
   position: absolute;
